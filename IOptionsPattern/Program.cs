@@ -30,11 +30,22 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("options", (IOptions<ApplicationOptions> options) =>
+// IOptions: return value of appsetting at the time app combine that mean when app running and change value inside appsetting.json the new value dont apply
+//           because it config as a Singleton an it save in caches in life time of application
+// IOptionsSnapshot: return lastest value of appsetting.json even if we change value of appsetting.json when application running. because it config as a scope service
+//                   it going to be resoled once inside of current application scope
+// IOptionsMonitor: return lastest value of appsetting.json even if we change value of appsetting.json when application running. because it config as a Singleton 
+//                  but the value is alway read lastest confign value
+        
+app.MapGet("options", (IOptions<ApplicationOptions> options,
+                       IOptionsSnapshot<ApplicationOptions> optionsSnapshot,
+                       IOptionsMonitor<ApplicationOptions> optionsMonitor) =>
 {
     var resopnse = new
     {
-        options.Value.ExampleValue
+        OpionsValue = options.Value.ExampleValue,
+        SnapshotValue = optionsSnapshot.Value.ExampleValue,
+        MonitorValue = optionsMonitor.CurrentValue.ExampleValue
     };
     return Results.Ok(resopnse);
 });

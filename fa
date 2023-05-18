@@ -1,0 +1,41 @@
+[1mdiff --git a/IOptionsPattern/Program.cs b/IOptionsPattern/Program.cs[m
+[1mindex d9b1765..8c2c702 100644[m
+[1m--- a/IOptionsPattern/Program.cs[m
+[1m+++ b/IOptionsPattern/Program.cs[m
+[36m@@ -30,11 +30,22 @@[m [mapp.UseAuthorization();[m
+ [m
+ app.MapControllers();[m
+ [m
+[31m-app.MapGet("options", (IOptions<ApplicationOptions> options) =>[m
+[32m+[m[32m// IOptions: return value of appsetting at the time app combine that mean when app running and change value inside appsetting.json the new value dont apply[m
+[32m+[m[32m//           because it config as a Singleton an it save in caches in life time of application[m
+[32m+[m[32m// IOptionsSnapshot: return lastest value of appsetting.json even if we change value of appsetting.json when application running. because it config as a scope service[m
+[32m+[m[32m//                   it going to be resoled once inside of current application scope[m
+[32m+[m[32m// IOptionsMonitor: return lastest value of appsetting.json even if we change value of appsetting.json when application running. because it config as a Singleton[m[41m [m
+[32m+[m[32m//                  but the value is alway read lastest confign value[m
+[32m+[m[41m        [m
+[32m+[m[32mapp.MapGet("options", (IOptions<ApplicationOptions> options,[m
+[32m+[m[32m                       IOptionsSnapshot<ApplicationOptions> optionsSnapshot,[m
+[32m+[m[32m                       IOptionsMonitor<ApplicationOptions> optionsMonitor) =>[m
+ {[m
+     var resopnse = new[m
+     {[m
+[31m-        options.Value.ExampleValue[m
+[32m+[m[32m        OpionsValue = options.Value.ExampleValue,[m
+[32m+[m[32m        SnapshotValue = optionsSnapshot.Value.ExampleValue,[m
+[32m+[m[32m        MonitorValue = optionsMonitor.CurrentValue.ExampleValue[m
+     };[m
+     return Results.Ok(resopnse);[m
+ });[m
+[1mdiff --git a/IOptionsPattern/appsettings.json b/IOptionsPattern/appsettings.json[m
+[1mindex 2245cf8..06ab7f8 100644[m
+[1m--- a/IOptionsPattern/appsettings.json[m
+[1m+++ b/IOptionsPattern/appsettings.json[m
+[36m@@ -7,6 +7,6 @@[m
+   },[m
+   "AllowedHosts": "*",[m
+   "ApplicationOptions": {[m
+[31m-    "ExampleValue": "Current value is: 1"[m
+[32m+[m[32m    "ExampleValue": "Current value is: 4"[m
+   }[m
+ }[m
