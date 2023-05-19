@@ -11,8 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //IOption read
-builder.Services.Configure<ApplicationOptions>(
-    builder.Configuration.GetSection(nameof(ApplicationOptions)));
+builder.Services.ConfigureOptions<ApplicationOptionsSetup>();
 
 
 var app = builder.Build();
